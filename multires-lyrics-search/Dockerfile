@@ -4,9 +4,9 @@ FROM jinaai/jina
 COPY . /workspace
 WORKDIR /workspace
 
-RUN pip uninstall -y jina && pip install -r requirements.txt && mkdir data && mv lyrics-data.csv data/
+RUN pip uninstall -y jina && pip install -r requirements.txt
 
-ENV JINA_DATA_PATH='data/lyrics-data.csv'
+ENV JINA_DATA_PATH='data'
 ENV JINA_SHARDS='10'
 ENV JINA_MAX_DOCS='10000'
 

@@ -7,6 +7,7 @@ import csv
 import os
 import sys
 import itertools
+import json
 
 from jina.flow import Flow
 from jina import Document
@@ -23,19 +24,34 @@ def config():
 
 
 def input_fn():
-    lyrics_file = os.environ.setdefault(
-        'JINA_DATA_PATH', 'toy-data/lyrics-toy-data1000.csv'
+
+    path = os.environ.setdefault(
+        'JINA_DATA_PATH', 'data'
     )
-    with open(lyrics_file, newline='', encoding='utf-8') as f:
-        reader = csv.reader(f)
-        for row in itertools.islice(reader, int(os.environ['JINA_MAX_DOCS'])):
-            if row[-1] == 'ENGLISH':
-                with Document() as d:
-                    d.tags['ALink'] = row[0]
-                    d.tags['SName'] = row[1]
-                    d.tags['SLink'] = row[2]
-                    d.text = row[3]
-                yield d
+    print("listing files:")
+    files = os.listdir(path)
+    print(files)
+    for file in files:
+        try:
+            with open(os.path.join(path, file)) as f:
+                scanJson = json.load(f)
+
+                text = ""
+                for page in scanJson:
+
+                    try:
+                        text += page["X-TIKA:content"]
+                    except Exception as ex:
+                        print(ex)
+                        pass
+                    print(text)
+                    with Document() as d:
+                        d.tags['fileName'] = file
+                        d.text = text
+                    
+                    yield d
+        except Exception as ex1:
+            pass
 
 
 # for index
