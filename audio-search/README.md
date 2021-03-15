@@ -41,6 +41,15 @@ A demo of neural search for audio data based Vggish model.
 
 ## Install Prerequisites
 
+- In order to run this example, you should have [youtube-dl](https://ytdl-org.github.io/youtube-dl/index.html),
+[ffmpeg](https://ffmpeg.org/download.html) available in your system. Please refer to the specific installation instructions.
+- For MacOS users, a [libmagic](https://filemagic.readthedocs.io/en/latest/guide.html)
+installation will furtherly be needed and can be obtained by running
+```bash
+brew install libmagic
+```
+
+- You can add to your system the python libraries required for this example by running the following:
 ```bash
 pip install -r requirements.txt
 ```
@@ -50,7 +59,8 @@ pip install -r requirements.txt
 - In this example, we use the Vggish model to encode the sound files. You can find more details about the model at [https://github.com/tensorflow/models/tree/master/research/audioset/vggish](https://github.com/tensorflow/models/tree/master/research/audioset/vggish). Use the following cmd to download the models. For downloading the audioset data, we adapt the codes from the `runme.sh` script at [https://github.com/qiuqiangkong/audioset_tagging_cnn ](https://github.com/qiuqiangkong/audioset_tagging_cnn). We provide the following script, it will download 10 audio files from the audioset dataset.
 
 ```bash
-bash download.sh
+bash download_model.sh
+bash download_data.sh
 ```
 
 
@@ -62,22 +72,27 @@ After preparing the data, here is how the folder looks like,
 ├── README.md
 ├── app.py
 ├── data
+├── ├── metadata
+│   │   └── eval_segments.csv
 │   ├── YjmN-c5mDxfw.wav
 │   ├── Yjo9lFbGXf_0.wav
 │   └── Yjzij1UX73kU.wav
-├── download.sh
+├── download_data.sh
+├── download_model.sh
 ├── flows
 │   ├── index.yml
 │   └── query.yml
+├── get_data.sh
 ├── models
 │   ├── vggish_model.ckpt
 │   └── vggish_pca_params.npz
 ├── pods
-│   ├── craft.yml
+│   ├── chunk_merger.yml
 │   ├── customized_executors.py
 │   ├── doc.yml
 │   ├── encode.yml
 │   ├── rank.yml
+│   ├── segment.yml
 │   ├── vec.yml
 │   └── vggish
 │       ├── mel_features.py
@@ -85,7 +100,13 @@ After preparing the data, here is how the folder looks like,
 │       ├── vggish_params.py
 │       ├── vggish_postprocess.py
 │       └── vggish_slim.py
-└── requirements.txt
+├── requirements.txt
+└── tests
+    ├── data
+    │   ├── YjmN-c5mDxfw.wav
+    │   ├── Yjo9lFbGXf_0.wav
+    │   └── Yjzij1UX73kU.wav
+    └── test_audio_search.py
 ```
 
 
@@ -99,10 +120,10 @@ sh ./get_data.sh
 
 | Command                  | Description                  |
 | :---                     | :---                         |
-| ``python app.py index``  | To index files/data          |
-| ``python app.py search`` | To run query on the index    |
+| ``python app.py -t index``  | To index files/data          |
+| ``python app.py -t query`` | To run query on the index    |
 
-
+Then open https://jina.ai/jinabox.js/ for querying.
 ## Run as a Docker Container
 
 
